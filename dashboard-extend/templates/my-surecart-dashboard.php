@@ -164,7 +164,7 @@ namespace rupdashextendersc\SureCartDashboard {
                     </div>
                 </div>
 
-                <div class="sc-dashboard__column dashboard-right">
+                    <div class="sc-dashboard__column dashboard-right">
                     <?php
                     // Build a dynamic hook for our custom content.
                     $custom_hook = 'rup_sc_dashextender_surecart_dashboard_right_' . sanitize_key( $active_tab );
@@ -184,13 +184,12 @@ namespace rupdashextendersc\SureCartDashboard {
                         $custom_content_output = true;
                     }
                     
-                    // Fallback: if no custom content was output by either hook, display the default page content.
-                    if ( ! $custom_content_output ) {
+                    // Fallback: if no custom content was output by either hook, display the default page content.                    
                         while ( have_posts() ) {
                             the_post();
                             the_content();
                         }
-                    }
+                    
                     ?>
                 </div>
             </div>
