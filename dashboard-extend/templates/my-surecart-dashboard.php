@@ -164,32 +164,34 @@ namespace rupdashextendersc\SureCartDashboard {
                     </div>
                 </div>
 
-                    <div class="sc-dashboard__column dashboard-right">
+                <div class="sc-dashboard__column dashboard-right">
                     <?php
                     // Build a dynamic hook for our custom content.
                     $custom_hook = 'rup_sc_dashextender_surecart_dashboard_right_' . sanitize_key( $active_tab );
-                    
-                    // Flag to determine if any custom content was output.
-                    $custom_content_output = false;
-                    
-                    // First, fire the Surelywp hook (if any) so their custom content is output.
-                    if ( has_action( 'surelywp_surecart_dashboard_right' ) ) {
-                        do_action( 'surelywp_surecart_dashboard_right', $controller, $data );
-                        $custom_content_output = true;
-                    }
-                    
-                    // Next, fire our dynamic hook for our own custom content.
-                    if ( has_action( $custom_hook ) ) {
-                        do_action( $custom_hook, $controller, $data );
-                        $custom_content_output = true;
-                    }
-                    
-                    // Fallback: if no custom content was output by either hook, display the default page content.                    
+
+                    // Capture output from the Surelywp hook.
+                    ob_start();
+                    do_action( 'surelywp_surecart_dashboard_right', $controller, $data );
+                    $surelywp_output = ob_get_clean();
+
+                    // Capture output from our custom hook.
+                    ob_start();
+                    do_action( $custom_hook, $controller, $data );
+                    $custom_output = ob_get_clean();
+
+                    // If either hook produced output, echo it. Otherwise, display the default SureCart content.
+                    if ( ! empty( $surelywp_output ) ) {
+                        echo $surelywp_output;
+                    } elseif ( ! empty( $custom_output ) ) {
+                        echo $custom_output;
+                    } else {
+                        // In case the main loop was partially consumed, rewind it.
+                        rewind_posts();
                         while ( have_posts() ) {
                             the_post();
                             the_content();
                         }
-                    
+                    }
                     ?>
                 </div>
             </div>
